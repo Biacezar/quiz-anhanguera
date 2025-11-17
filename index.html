@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Anhanguera</title>
+  <link rel="icon" type="image/png" href="imagens/logo.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 🏫 Tela inicial -->
+  <section class="tela-inicial" id="tela-inicial">
+    <img src="imagens/escola.png" alt="Escola" class="imagem-escola">
+    <div class="conteudo">
+      <h1>🏫 Bem-vindo ao Quiz da Escola!</h1>
+      <p>Descubra qual funcionário você seria!</p>
+      <button onclick="iniciarQuiz()">Começar</button>
+    </div>
+  </section>
+
+  <!-- ❓ Tela do quiz -->
+  <section class="quiz escondido" id="quiz">
+    <div id="question-container">
+      <img id="question-image" src="" alt="Imagem da pergunta" class="imagem-pergunta">
+      <h2 id="question"></h2>
+      <div id="options" class="opcoes"></div>
+    </div>
+  </section>
+
+
+  <script src="data.js"></script>
+  <script>
+    // 🔹 Perguntas e respostas
+    
+      const questions = [
+  {
+    question: "Qual é a sua matéria favorita na escola?",
+    image: "imagens/materias.jpg",
+    answers: [
+      { text: "Matemática", funcionario: "Beatriz, Juliana" },
+      { text: "Informatica", funcionario: "Andre Mauricio, Rogerio" },
+      { text: "Português", funcionario: "Vitor, Suzi" },
+      { text: "Ir embora", funcionario: "Adriana, Helio" }
+    ]
+  },
+  {
+    question: "Qual dessas áreas mais combina com você?",
+    image: "imagens/profissoes.jpg",
+    answers: [
+      { text: "Tecnologia", funcionario: "Rogerio, Helio" },
+      { text: "Ensinar", funcionario: "Beatriz, Vitor" },
+      { text: "Organizar e planejar", funcionario: "Adriana, Andre Mauricio" },
+      { text: "Praticar esportes", funcionario: "Suzi, Juliana" }
+    ]
+  },
+  {
+    question: "Como você reage quando as férias acabam?",
+    image: "imagens/ferias.jpg",
+    answers: [
+      { text: "Feliz em rever o pessoal", funcionario: "Vitor, Helio" },
+      { text: "Triste, queria mais descanso", funcionario: "Beatriz, Suzi" },
+      { text: "Indiferente", funcionario: "Andre Mauricio, Juliana" },
+      { text: "Animado para novos desafios", funcionario: "Adriana, Rogerio" }
+    ]
+
+  },
+  {
+    question: "Em qual parte do ambiente escolar você se sente mais confortável?",
+    image: "imagens/sala.jpeg",
+    answers: [
+      { text: "Banheirio", funcionario: "Suzi, Andre Mauricio" },
+      { text: "Pátio", funcionario: "Rogerio, Juliana" },
+      { text: "Sala de aula", funcionario: "Beatriz, Vitor" },
+      { text: "Refeitório", funcionario: "Adriana, Helio" }
+    ]
+  },
+  {
+    question: "Qual momento do dia você gosta mais?",
+    image: "imagens/horario.png",
+    answers: [
+      { text: "Primeiras aulas", funcionario: "Suzi, Beatriz" },
+      { text: "Após intervalo", funcionario: "Rogerio, Juliana" },
+      { text: "Aula vaga", funcionario: "Helio, Andre Mauricio" },
+      { text: "Ás 18:20", funcionario: "Vitor, Adriana" }
+    ]
+  },
+  {
+    question: "Qual tipo de atividade você mais gosta?",
+    image: "imagens/atividades.png",
+    answers: [
+      { text: " Aulas teóricas", funcionario: "Juliana, Vitor" },
+      { text: "Aulas práticas/laboratório", funcionario: "Andre Mauricio, Beatriz" },
+      { text: "Esportes", funcionario: "Rogerio, Helio" },
+      { text: "Atividades culturais/arte", funcionario: "Adriana, Suzi" }
+    ]
+  },
+  {
+    question: "Como você lida com desafios?",
+    image: "imagens/grupo.png",
+    answers: [
+      { text: "Com planejamento e organização", funcionario: "Adriana, Juliana" },
+      { text: "Com criatividade e inovação", funcionario: "Helio, Andre Mauricio" },
+      { text: "Com trabalho em equipe", funcionario: "Beatriz, Rogerio" },
+      { text: "Com determinação e foco", funcionario: "Vitor, Suzi" }
+    ]
+  },
+  {
+    question: "Qual dessas qualidades você mais valoriza em si mesmo?",
+    image: "imagens/qualidades.jpg",
+    answers: [
+      { text: "Liderança", funcionario: "Adriana, Rogerio" },
+      { text: "Empatia", funcionario: "Beatriz, Helio" },
+      { text: "Criatividade", funcionario: "Andre Mauricio, Vitor" },
+      { text: "Organização", funcionario: "Juliana, Suzi" }
+    ]
+  },
+  {
+    question: "Com quem você se sente mais à vontade na escola?",
+    image: "imagens/motivacao.jpg",
+    answers: [
+      { text: "Amigos", funcionario: "Vitor, Juliana" },
+      { text: "Professores", funcionario: "Andre Mauricio, Rogerio" },
+      { text: "Sozinho", funcionario: "Beatriz, Suzi" },
+      { text: "Equipe administrativa", funcionario: "Adriana, Helio" }
+    ]
+  }
+];
+    const counts = {
+      "Rogerio": 0,
+      "Beatriz": 0,
+      "Adriana": 0,
+      "Vitor": 0,
+      "Suzi": 0,
+      "Andre Mauricio": 0,
+      "Helio": 0,
+      "Juliana": 0
+    };
+
+    let currentQuestion = 0;
+
+    const telaInicial = document.getElementById("tela-inicial");
+    const quiz = document.getElementById("quiz");
+    const resultado = document.getElementById("resultado");
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const questionImage = document.getElementById("question-image");
+    const resultNome = document.getElementById("result-nome");
+    const resultImage = document.getElementById("result-image");
+
+    // maps moved to data.js
+
+    function iniciarQuiz() {
+  telaInicial.classList.add("escondido");
+  quiz.classList.remove("escondido");
+  
+  // NOVO: Remove a restrição de rolagem quando o quiz começar
+  document.body.style.overflowY = 'auto'; 
+  
+  showQuestion();
+}
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      questionEl.textContent = q.question;
+      questionImage.src = q.image;
+      optionsEl.innerHTML = "";
+
+      q.answers.forEach(ans => {
+        const btn = document.createElement("button");
+        btn.textContent = ans.text;
+        btn.classList.add("option");
+        btn.addEventListener("click", () => selectAnswer(ans.funcionario));
+        optionsEl.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(funcionario) {
+  // Divide os nomes separados por vírgula e remove espaços
+  const nomes = funcionario.split(",").map(nome => nome.trim());
+  nomes.forEach(nome => {
+    if(counts[nome] !== undefined){
+      counts[nome]++;
+    }
+  });
+
+  currentQuestion++;
+  if (currentQuestion < questions.length) {
+    showQuestion();
+  } else {
+    mostrarResultado();
+  }
+}
+
+
+    function mostrarResultado() {
+      try {
+      // calcula o resultado e redireciona para a página de resultado
+      const result = Object.keys(counts).reduce((a, b) =>
+        counts[a] > counts[b] ? a : b
+      );
+      console.log('mostrarResultado -> resultado calculado:', result, counts);
+      // salva o resultado e redireciona
+      localStorage.setItem('quiz_result', result);
+      window.location.href = 'resultado.html';
+      } catch (err) {
+        console.error('Erro em mostrarResultado:', err);
+        // mostra a seção para evitar que fique invisível por erro
+        quiz.classList.add("escondido");
+        resultado.classList.remove("escondido");
+        resultado.style.display = 'flex';
+        resultNome.textContent = 'Erro';
+      }
+    }
+
+    function recomecar() {
+      currentQuestion = 0;
+      for (let key in counts) counts[key] = 0;
+      // limpa visual do resultado
+      const descEl = document.getElementById('result-desc');
+      if (descEl) descEl.textContent = '';
+      resultImage.src = '';
+      resultado.classList.add("escondido");
+      quiz.classList.remove("escondido");
+      showQuestion();
+    }
+  </script>
+</body>
+</html>

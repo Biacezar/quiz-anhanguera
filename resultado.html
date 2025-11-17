@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Anhanguera</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* pequenas regras locais específicas (o grosso está em style.css) */
+    .resultado-final { padding-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="resultado-final">
+    <img id="foto-resultado" class="foto-resultado" src="" alt="Foto do funcionário">
+    <div class="nome-resultado">
+      <span id="result-prefix"></span>
+      <strong id="result-name"></strong>
+    </div>
+    <div class="desc-resultado" id="desc-resultado"></div>
+    <button class="btn-voltar" onclick="voltarQuiz()">Jogar novamente</button>
+  </div>
+
+  <script src="data.js"></script>
+  <script>
+    const result = localStorage.getItem('quiz_result');
+    const prefixEl = document.getElementById('result-prefix');
+    const nameEl = document.getElementById('result-name');
+    const fotoEl = document.getElementById('foto-resultado');
+    const descEl = document.getElementById('desc-resultado');
+
+    if (result) {
+      // prefixo fixo exibido antes do nome do funcionário
+      const resultPrefix = '✨Parabéns, você seria';
+      if (prefixEl) prefixEl.textContent = resultPrefix + ' ';
+      if (nameEl) nameEl.textContent = result;
+      descEl.textContent = nameToDesc[result] || '';
+
+      // tenta .jpg primeiro, depois .jpeg, e por fim default.svg
+      const baseName = (nameToImage[result] || result.toLowerCase().replace(/\s+/g, ''));
+      fotoEl.onerror = function() {
+        if (fotoEl.src.endsWith('.jpg')) {
+          fotoEl.src = 'imagens/' + baseName.replace(/\.jpg$/, '') + '.jpeg';
+        } else if (fotoEl.src.endsWith('.jpeg')) {
+          fotoEl.src = 'imagens/default.svg';
+        }
+      };
+      fotoEl.src = 'imagens/' + baseName;
+    } else {
+      if (prefixEl) prefixEl.textContent = '';
+      if (nameEl) nameEl.textContent = 'Nenhum resultado';
+      fotoEl.src = 'imagens/default.svg';
+      descEl.textContent = '';
+    }
+
+    function voltarQuiz() {
+      localStorage.removeItem('quiz_result');
+      window.location.href = 'index.html';
+    }
+
+  // Força a rolagem vertical
+  document.body.style.overflowY = 'auto';
+</script>
+  </script>
+</body>
+</html>
